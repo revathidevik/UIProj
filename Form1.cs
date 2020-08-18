@@ -85,7 +85,7 @@ namespace AttachmentsUI
                 {
                     if (openFileDialog2.CheckFileExists)
                     {
-                        string path = System.IO.Path.GetFullPath(openFileDialog1.FileName);
+                        string path = System.IO.Path.GetFullPath(openFileDialog2.FileName);
                         label3.Text = path;
                     }
                 }
@@ -116,15 +116,15 @@ namespace AttachmentsUI
                     string path = Application.StartupPath.Substring(0, (Application.StartupPath.Length - 10));
                     System.IO.File.Copy(openFileDialog1.FileName, path + "\\Documents\\" + pdffilename);
                     string currentDirectory = Directory.GetCurrentDirectory();
-                    string filePath = System.IO.Path.Combine(currentDirectory, "Documents", pdffilename);
+                    string filePath = System.IO.Path.Combine(path, "Documents", pdffilename);
 
                   
                     string BlobStorageConnection = ConfigurationManager.AppSettings["BlobStorageConnection"];
-                    await BlobStorage.SavePdf(BlobStorageConnection, filePath);
+                   // await BlobStorage.SavePdf(BlobStorageConnection, filePath);
 
                     string EventHubConnectionString = ConfigurationManager.AppSettings["EventHubConnectionString"];
                     System.IO.File.Copy(openFileDialog2.FileName, path + "\\Documents\\" + metadatafilename);
-                    string filePathMeta = System.IO.Path.Combine(currentDirectory, "Documents", metadatafilename);
+                    string filePathMeta = System.IO.Path.Combine(path, "Documents", metadatafilename);
                     AttachmentMetaData eventHubMessage = JsonHelpers.CreateFromJsonFile<AttachmentMetaData>(filePathMeta);
                     await EventHubsHelper.PushMessageToEventHubsAsync(eventHubMessage, EventHubConnectionString);
                     MessageBox.Show("Document uploaded.");
